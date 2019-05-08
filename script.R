@@ -63,18 +63,12 @@ rfm_histograms(rfm_result, hist_bins = 10, hist_color = "darkblue",
                hist_r_label = "Недавно", hist_f_label = "Частота",
                plot_title_justify = 0.5)
 
-
-
-
 # Шаг 3 - Создадим сегменты (от самых лояльных до потерянных)
-
-
-
 segment_names <- c("Чемпион", "Лояльный_покупатель", "Может_быть_лояльным",
                    "Новичок", "Падающий_надежду", "Требует_внимания", "Засыпает",
                    "В_зоне_риска", "Нельзя_терять", "В_спячке", "Потерян")
 
-recency_lower <- c(4, 2, 3, 4, 3, 2, 2, 1, 1, 1, 1)
+recency_lower <- c(4, 2, 3, 4, 3, 2, 2, 1, 1, 1, 1) 
 recency_upper <- c(5, 5, 5, 5, 4, 3, 3, 2, 1, 2, 1)
 frequency_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1, 1)
 frequency_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2, 2)
@@ -96,8 +90,12 @@ rfm_heatmap(rfm_result)
 
 TempData<- rfm_result$rfm
 
-getwd()
-setwd("C:/WorkFiles")
+#getwd()
+#setwd("C:/WorkFiles")
 
 
-write.csv(TempData, file='rfm_result.csv')
+#write.csv(TempData, file='rfm_result.csv')
+
+
+
+
