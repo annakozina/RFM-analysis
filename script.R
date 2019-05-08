@@ -74,12 +74,12 @@ segment_names <- c("Чемпион", "Лояльный_покупатель", "�
                    "Новичок", "Падающий_надежду", "Требует_внимания", "Засыпает",
                    "В_зоне_риска", "Нельзя_терять", "В_спячке", "Потерян")
 
-recency_lower <- c(4, 2, 3, 4, 3, 2, 2, 1, 1, 1)
-recency_upper <- c(5, 5, 5, 5, 4, 3, 3, 2, 1, 2)
-frequency_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1)
-frequency_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2)
-monetary_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1)
-monetary_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2)
+recency_lower <- c(4, 2, 3, 4, 3, 2, 2, 1, 1, 1, 1)
+recency_upper <- c(5, 5, 5, 5, 4, 3, 3, 2, 1, 2, 1)
+frequency_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1, 1)
+frequency_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2, 2)
+monetary_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1, 1)
+monetary_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2, 2)
 
 segments <- rfm_segment(rfm_result, segment_names, recency_lower,
                         recency_upper, frequency_lower, frequency_upper, monetary_lower,
@@ -101,21 +101,3 @@ setwd("C:/WorkFiles")
 
 
 write.csv(TempData, file='rfm_result.csv')
-
-
-
-
-
-library(rfm, lib="/RPackages/")
-library(lubridate, lib="/RPackages/")
-library(dplyr, lib="/RPackages/")
-library(crayon, lib="/RPackages/")
-library(fansi, lib="/RPackages/")
-library(utf8, lib="/RPackages/")
-library(cli, lib="/RPackages/")
-library(ggplot2, lib="/RPackages/")
-library(ggthemes, lib="/RPackages/")
-library(labeling, lib="/RPackages/")
-library(forcats, lib="/RPackages/")
-library(RColorBrewer, lib="/RPackages/")
-
