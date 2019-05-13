@@ -6,7 +6,6 @@
 # Шаг 1 - запуск пакетов
 
 getwd()
-#setwd("C:/RPackages")
 
 if(!require(rfm)){
   install.packages("rfm")
@@ -22,15 +21,14 @@ if(!require(ggplot2)){
   library(ggplot2)
 }
 
-
 # Шаг 2 - присваивание переменных
 
 # as_date() - ignores the tomezone attrubute resulting in a more intuitive vectors
 #analysis_date <- as_date('2006-12-31', tz='UTC')
 
 customer_id <- sample(1:6000, 500000, rep=TRUE) 
-order_date <- sample(seq(as.Date('2017/01/01'), as.Date('2018/12/01'), by='day'), 500)
-revenue <- sample(9:350, 500, rep=TRUE)  
+order_date <- sample(seq(as.Date('2014/03/01'), as.Date('2019/15/05'), by='day'), 500)
+revenue <- sample(0.8:350, 500, rep=TRUE)  
 
 data <- data.frame(customer_id, order_date, revenue)
 head(data)
@@ -40,7 +38,12 @@ rfm_result <- rfm_table_order(data=data,
                               customer_id=customer_id,
                               order_date=order_date,
                               revenue=revenue,
-                              analysis_date=Sys.Date())
+                              analysis_date=Sys.Date(),
+                              recency_bins = 3,
+                              frequency_bins = 3,
+                              monetary_bins = 10)
+
+
 
 # The heat map shows the average monetary value for different categories of recency 
 #and frequency scores. Higher scores of frequency and recency are characterized by higher 
@@ -64,7 +67,7 @@ rfm_histograms(rfm_result, hist_bins = 10, hist_color = "darkblue",
                plot_title_justify = 0.5)
 
 # Шаг 3 - Создадим сегменты (от самых лояльных до потерянных)
-segment_names <- c("Чемпион", "Лояльный_покупатель", "Может_быть_лояльным",
+segment_names <- c("Лояльный", "Лояльный_покупатель", "Может_быть_лояльным",
                    "Новичок", "Падающий_надежду", "Требует_внимания", "Засыпает",
                    "В_зоне_риска", "Нельзя_терять", "В_спячке", "Потерян")
 
@@ -96,6 +99,6 @@ TempData<- rfm_result$rfm
 
 #write.csv(TempData, file='rfm_result.csv')
 
-
+# Шкалирование Recency осуществляется из 
 
 
