@@ -114,15 +114,29 @@ SecondFunction <- function(x){
 ?str_replace
 c2New$telephone <-sapply(c2New$telephone,FirstFunction)
 c2New$telephone <-sapply(c2New$telephone,SecondFunction)
-c2New$telephone <-as.numeric(c2New$telephone)
+#c2New$telephone <-as.integer(c2New$telephone)
 
-c2New$IdKo <- 
+c2New$IdTel <- stringi::stri_sub(c2New$telephone, -9 -1)
+
+
 
 ############################################################################################
 ############################################################################################
+# Присвоим ID tel для таблицы C!
 
-max(unique(c2New$customer_id))
 
-?substr
-srtingi::stri_sub(c2New$telephone, -4, -1)
+c1$telephone <-sapply(c1$telephone,FirstFunction)
+c1$telephone <-sapply(c1$telephone,SecondFunction)
+#c1$telephone <-as.numeric(c1$telephone)
 
+c1$IdTel <- stringi::stri_sub(c1$telephone, -9 -1)
+
+##############################################################################################
+##############################################################################################
+library(dplyr)
+select(c2New %>% filter(customer_id == "1")
+
+       colnames(c1)
+joined <- full_join(c1, c2New, by="customer_id"")
+  
+  
