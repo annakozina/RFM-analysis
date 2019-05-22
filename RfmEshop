@@ -1,0 +1,24 @@
+
+getwd()
+Customer_1 <- read.csv(file.path("/home/user/RfmEshop", "cart_customer.csv"), stringsAsFactors=FALSE)
+Customer_2 <- read.csv(file.path("/home/user/RfmEshop", "cart_order_product.csv"), stringsAsFactors=FALSE)
+Customer_3 <- read.csv(file.path("/home/user/RfmEshop", "cart_product.csv"), stringsAsFactors=FALSE)
+Customer_4 <- read.csv(file.path("/home/user/RfmEshop", "cart_country.csv"), stringsAsFactors=FALSE)
+Customer_5 <- read.csv(file.path("/home/user/RfmEshop", "cart_address.csv"), stringsAsFactors=FALSE)
+
+str(Customer_1)
+str(Customer_2)
+str(Customer_3)
+str(Customer_4)
+str(Customer_5)
+
+c1 <- data.frame(Customer_1)
+c2 <- data.frame(Customer_2)
+c3 <- data.frame(Customer_3)
+c4 <- data.frame(Customer_4)
+c5 <- data.frame(Customer_5)
+
+
+
+colnames(c1)
+colnames(c2)
