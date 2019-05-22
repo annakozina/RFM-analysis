@@ -137,6 +137,18 @@ library(dplyr)
 select(c2New %>% filter(customer_id == "1")
 
        colnames(c1)
-joined <- full_join(c1, c2New, by="customer_id"")
-  
+       colnames(c2New)
+
+       c2New <- select(c2New, -c(9,10,12,13,14,15,16,18,23,26,29,31,32))  
+       
+       c2New <- select(c2New, -c(15,22,23,24,25,27:40))       
+       
+       c2New <- select(c2New, -c(9,20,21,25,26,27, 28, 29, 30, 31))       
+       
+       c1 <- select(c1, -c(2,3,4,9,10,11,14,16,17,18,19,20))  
+       
+    
+###############################################
+       
+       # Отчистим данные для с 3
   
