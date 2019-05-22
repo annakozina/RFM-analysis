@@ -136,8 +136,7 @@ c1$IdTel <- stringi::stri_sub(c1$telephone, -9 -1)
 library(dplyr)
 select(c2New %>% filter(customer_id == "1")
 
-       colnames(c1)
-       colnames(c2New)
+      
 
        c2New <- select(c2New, -c(9,10,12,13,14,15,16,18,23,26,29,31,32))  
        
@@ -150,5 +149,19 @@ select(c2New %>% filter(customer_id == "1")
     
 ###############################################
        
-       # Отчистим данные для с 3
-  
+       # Теперь объеденим данные
+       
+       colnames(c1)
+       colnames(c2New)
+       
+       c2New$customer_id <- as.character(c2New$customer_id)
+       c1$customer_id <- as.character(c1$customer_id)
+       
+       colnames(Merged)
+       
+       Merged <-left_join(c2New, c1, by="customer_id")
+       
+       Merged2 <- left_join(c2New, c1, by="IdTel")
+       
+       
+       
