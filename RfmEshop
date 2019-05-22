@@ -1,10 +1,10 @@
 
 getwd()
-Customer_1 <- read.csv(file.path("/home/user/RfmEshop", "cart_customer.csv"), stringsAsFactors=FALSE)
-Customer_2 <- read.csv(file.path("/home/user/RfmEshop", "cart_order_product.csv"), stringsAsFactors=FALSE)
-Customer_3 <- read.csv(file.path("/home/user/RfmEshop", "cart_product.csv"), stringsAsFactors=FALSE)
-Customer_4 <- read.csv(file.path("/home/user/RfmEshop", "cart_country.csv"), stringsAsFactors=FALSE)
-Customer_5 <- read.csv(file.path("/home/user/RfmEshop", "cart_address.csv"), stringsAsFactors=FALSE)
+Customer_1 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_customer.csv"), stringsAsFactors=FALSE)
+Customer_2 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_order_product.csv"), stringsAsFactors=FALSE)
+Customer_3 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_product.csv"), stringsAsFactors=FALSE)
+Customer_4 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop","cart_country.csv"), stringsAsFactors=FALSE)
+Customer_5 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_address.csv"), stringsAsFactors=FALSE)
 
 str(Customer_1)
 str(Customer_2)
@@ -18,7 +18,5 @@ c3 <- data.frame(Customer_3)
 c4 <- data.frame(Customer_4)
 c5 <- data.frame(Customer_5)
 
+# Чистим данные Customer_2 
 
-
-colnames(c1)
-colnames(c2)
