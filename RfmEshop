@@ -98,3 +98,31 @@ colnamesC2 <- c("order_product_id",
 c2New<-data.frame(separate(c2, old, colnamesC2, sep=";"))
 c2New
 
+## Создадим функцию по удалению 
+
+
+
+FirstFunction <- function(x){
+  stringr::str_replace_all(x, "[^[:alnum:]]", "")
+}
+
+SecondFunction <- function(x){
+  stringr::str_replace_all(x, "[:blank:]", "")
+}
+
+
+?str_replace
+c2New$telephone <-sapply(c2New$telephone,FirstFunction)
+c2New$telephone <-sapply(c2New$telephone,SecondFunction)
+c2New$telephone <-as.numeric(c2New$telephone)
+
+c2New$IdKo <- 
+
+############################################################################################
+############################################################################################
+
+max(unique(c2New$customer_id))
+
+?substr
+srtingi::stri_sub(c2New$telephone, -4, -1)
+
