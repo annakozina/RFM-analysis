@@ -80,10 +80,19 @@ Merged <- select(Merged, -c(9,17,22,23,24,25,26,27,28))
 
 # Поменяем последовательность колонок для красоты
 
+if(!require(lubridate)){
+  install.packages("lubridate")
+  library(lubridate)
+}
+
 Merged <- Merged[c("IdTel", "firstname.x", "lastname.x", "email.x", 
          "telephone.x", "payment_city", "order_id", "product_id", "total", 
          "date_added.x", "payment_city",
          "ip.y",  "ip.x")]
+
+Merged$date_added.x <-date(Merged$date_added.x)
+
+
 
 colnames(Merged)
 
@@ -101,16 +110,58 @@ if(!require(ggplot2)){
   library(ggplot2)
 }
 
+if(!require(crayon)){
+  install.packages("crayon")
+  library(crayon)
+}
+
+if(!require(fansi)){
+  install.packages("fansi")
+  library(fansi)
+}
+
+if(!require(utf8)){
+  install.packages("fansi")
+  library(utf8)
+}
+
+if(!require(cli)){
+  install.packages("cli")
+  library(cli)
+}
+
+if(!require(ggthemes)){
+  install.packages("ggthemes")
+  library(ggthemes)
+}
+
+if(!require(labeling)){
+  install.packages("labeling")
+  library(labeling)
+}
+
+if(!require(forcats)){
+  install.packages("forcats")
+  library(forcats)
+}
+
+if(!require(RColorBrewer)){
+  install.packages("RColorBrewer")
+  library(RColorBrewer)
+}
 
 
+str(Merged)
 colnames(Merged)
 
-customer_id <- Merged2$IdTel
-order_date <- Merged2$date_added.y
-revenue <- Merged2$total
+customer_id <- as.factor(Merged$IdTel)
+order_date <- as.factor(Merged$date_added.x)
+revenue <- as.factor(Merged$total)
+
+?rfm
 
 data <- data.frame(customer_id, order_date, revenue)
-head(data)
+head(order_date)
 
 str(data)
 rfm_result <- rfm_table_order(data=data, 
