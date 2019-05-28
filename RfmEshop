@@ -53,6 +53,13 @@ if(!require(RColorBrewer)){
   library(RColorBrewer)
 }
 
+if(!require(xlsx)){
+  install.packages("xlsx")
+  library(xlsx)
+}
+
+
+
 Customer_1 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_customer.csv"), stringsAsFactors=FALSE)
 Customer_2 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_order_product.csv"), sep =";", stringsAsFactors=FALSE)
 Customer_3 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_product.csv"), stringsAsFactors=FALSE)
@@ -159,7 +166,6 @@ Rfm<-data.frame(rfm_result$rfm)
 
                                                  
 M <- Merged %>% 
-distinct(IdTel, .keep_all = TRUE)%>%
 select(IdTel, firstname.x,lastname.x,email.x,customer_id.x)
 
 colnames(Rfm)[1] <- "IdTel"
@@ -224,7 +230,10 @@ rfm_describe <- data.frame(cbind(rfm_score, status, category))
 
 RfmWc <- left_join(RfmWc, rfm_describe, by="rfm_score")  
 
-write.csv(RfmWc, file='rfm_result.csv')
+write.xlsx(RfmWc, file = "RFM_Eshop.xlsx", sheetName = "any", append = FALSE)
+
+getwd()
+#write.csv(RfmWc, file='rfm_result.csv')
 
 # rfm_heatmap(rfm_result)
 # 
@@ -264,10 +273,15 @@ write.csv(RfmWc, file='rfm_result.csv')
 
 
 
+test <- c2 %>%
+  filter(IdTel == "9031635777") 
+%>%
+  summarize(sum = sum(total, na.rm = TRUE),
+            average = mean(total, na.rm=TRUE), 
+  ) 
 
 
-
-
+colnames(c2)
 
 
 
