@@ -158,9 +158,14 @@ rfm_result <- rfm_table_order(data,
 Rfm<-data.frame(rfm_result$rfm)
 
                                                  
-Merged <- select(Merged, IdTel, firstname.x,lastname.x,email.x,customer_id.x)
+M <- Merged %>% 
+distinct(IdTel, .keep_all = TRUE)%>%
+select(IdTel, firstname.x,lastname.x,email.x,customer_id.x)
+
 colnames(Rfm)[1] <- "IdTel"
-RfmWc <- left_join(Rfm, Merged, by="IdTel")  
+
+
+RfmWc <- full_join(Rfm, M, by="IdTel")  
 
 # The heat map shows the average monetary value for different categories of recency 
 #and frequency scores. Higher scores of frequency and recency are characterized by higher 
