@@ -1,0 +1,304 @@
+
+if(!require(rfm)){
+  install.packages("rfm")
+  library(rfm)
+}
+
+if(!require(lubridate)){
+  install.packages("lubridate")
+  library(lubridate)
+}
+
+if(!require(ggplot2)){
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if(!require(crayon)){
+  install.packages("crayon")
+  library(crayon)
+}
+
+if(!require(fansi)){
+  install.packages("fansi")
+  library(fansi)
+}
+
+if(!require(utf8)){
+  install.packages("fansi")
+  library(utf8)
+}
+
+if(!require(cli)){
+  install.packages("cli")
+  library(cli)
+}
+
+if(!require(ggthemes)){
+  install.packages("ggthemes")
+  library(ggthemes)
+}
+
+if(!require(labeling)){
+  install.packages("labeling")
+  library(labeling)
+}
+
+if(!require(forcats)){
+  install.packages("forcats")
+  library(forcats)
+}
+
+if(!require(RColorBrewer)){
+  install.packages("RColorBrewer")
+  library(RColorBrewer)
+}
+
+if(!require(xlsx)){
+  install.packages("xlsx")
+  library(xlsx)
+}
+
+if(!require(dplyr)){
+  install.packages("dplyr")
+  library(dplyr)
+}
+
+if(!require(stringi)){
+  install.packages("stringi")
+  library(stringi)
+}
+
+if(!require(stringr)){
+  install.packages("stringr")
+  library(stringr)
+}
+
+
+Customer_1 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_customer.csv"), stringsAsFactors=FALSE)
+Customer_2 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_order_product.csv"), sep =";", stringsAsFactors=FALSE)
+Customer_3 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_product.csv"), stringsAsFactors=FALSE)
+Customer_4 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop","cart_country.csv"), stringsAsFactors=FALSE)
+Customer_5 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_address.csv"), stringsAsFactors=FALSE)
+
+str(Customer_1)
+str(Customer_2)
+str(Customer_3)
+str(Customer_4)
+str(Customer_5)
+
+c1 <- data.frame(Customer_1)
+c2 <- data.frame(Customer_2)
+c3 <- data.frame(Customer_3)
+c4 <- data.frame(Customer_4)
+c5 <- data.frame(Customer_5)
+
+## ФУНКИЙЯ ПО ОЧИСТКЕ ДАННЫХ
+
+FirstFunction <- function(x){
+  stringr::str_replace_all(x, "[^[:alnum:]]", "")
+}
+
+SecondFunction <- function(x){
+  stringr::str_replace_all(x, "[:blank:]", "")
+}
+
+c2$telephone <-sapply(c2$telephone,FirstFunction)
+c2$telephone <-sapply(c2$telephone,SecondFunction)
+c2$IdTel <- stri_sub(c2$telephone, -9 -1)
+
+############################################################################################
+c1$telephone <-sapply(c1$telephone,FirstFunction)
+c1$telephone <-sapply(c1$telephone,SecondFunction)
+#c1$telephone <-as.numeric(c1$telephone)
+c1$IdTel <- stri_sub(c1$telephone, -9 -1)
+##############################################################################################
+
+
+c1 <- select(c1, IdTel, firstname, lastname, email, customer_id)
+colnames(c1)
+
+
+
+c1 <- c1 %>% distinct(IdTel,.keep_all = TRUE) 
+c2 <- select(c2, c(IdTel, total, product_id, name, date_added)) 
+
+colnames(c2)
+
+c2$date_added <- as.Date(c2$date_added)
+
+c2 <- c2 %>%
+  group_by(IdTel, date_added) %>%
+  summarize(sum = sum(total, na.rm = TRUE),
+            average = mean(total, na.rm=TRUE), 
+  )
+
+####
+###############################################
+###########################################################
+IdTel <- as.factor(c2$IdTel)
+date <- c2$date_added
+sum <- as.integer(c2$sum)
+
+data <- data.frame(IdTel, date, sum)
+
+rfm_result <- rfm_table_order(data,
+                              IdTel,
+                              date,
+                              sum,
+                              analysis_date=Sys.Date(),
+                              recency_bins = 3,
+                              frequency_bins = 3,
+                              monetary_bins = 3)
+
+
+Rfm<-data.frame(rfm_result$rfm)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  !!!!!!!!!!!!!!ВНИМАНИЕ!!!!!!!!!!!!ФУНКЦИЯ ДОРАБОТАНА В ИЗ-ЗА ТОГО, ЧТО НЕОБХОДИМО ДОНАСТРОИТЬ monetary_lower
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  
+
+Correctfunction <- function(x){
+if (x>50000) {print(3)} else 
+  if(x>=10000&x<=49999.999999) {print(2)} else 
+    {print(1)}
+                                 }
+
+
+Rfm$monetary_score <- lapply(Rfm$amount, Correctfunction)
+Rfm$rfm_score <- paste(Rfm$recency_score, Rfm$frequency_score, Rfm$monetary_score)
+Rfm$rfm_score <- stringr::str_replace_all(Rfm$rfm_score , "[:blank:]", "")
+#Rfm$rfm_score <- as.factor(Rfm$rfm_score)
+
+#################################################################################
+colnames(Rfm)[1] <- "IdTel"
+Rfm <- left_join(Rfm, c1, by="IdTel")  
+
+# The heat map shows the average monetary value for different categories of recency 
+#and frequency scores. Higher scores of frequency and recency are characterized by higher 
+#average monetary value as indicated by the darker areas in the heatmap.
+
+rfm_score <- c("111", "112", "113",
+               "121", "122", "123", 
+               "131", "132", "133", 
+               "211", "212", "213", 
+               "221", "222", "223", 
+               "231", "232", "233",
+               "311", "312", "313",
+               "321", "322", "323",
+               "331", "332", "333")
+#
+status <- c("Одноразовый маленький чек",	
+            "Одноразовый средний чек",
+            "Одноразовый VIP",
+            "Уходящий редкий маленьний чек",	
+            "Уходящий редкий средний чек",
+            "Уходящий редкий VIP",	
+            "Уходящий постоянный маленький чек",	
+            "Уходящий постоянный средний чек",
+            "Уходящий постоянный VIP",
+            "Спящий разовый маленький чек",
+            "Спящий разовый средний чек",
+            "Спящий разовый VIP",
+            "Спящий редкий маленький чек",
+            "Спящий редкий средний чек",
+            "Спящий редкий VIP",
+            "Спящий постоянный маленький чек",
+            "Спящий постоянный средний чек",
+            "Спящий постоянный VIP",
+            "Новички маленький чек",
+            "Новички средний чек",
+            "Новички высокий чек. Потенциальные VIP",
+            "Может быть постоянным маленький чек",
+            "Может быть постоянным средний чек",
+            "Может быть постоянным-VIP",
+            "Постоянный маленький чек",
+            "Постоянный средний чек",
+            "Постоянный VIP")
+
+
+category <- c("уходящие", "уходящие", "уходящие", "уходящие",
+              "уходящие", "уходящие","уходящие","уходящие","уходящие", 
+              "спящие", "спящие", "спящие", "спящие",
+              "спящие", "спящие", "спящие", "спящие", "спящие",
+              "постоянные", "постоянные", "постоянные", "постоянные",
+              "постоянные", "постоянные", "постоянные", "постоянные", "постоянные")
+
+
+
+rfm_score <-as.character(rfm_score) 
+rfm_described <- data.frame(cbind(rfm_score, status, category))
+
+RfmLast <- left_join(Rfm, rfm_described, by="rfm_score")  
+
+write.xlsx(RfmLast, file = "RFM_Eshop.xlsx", sheetName = "any", append = FALSE)
+
+getwd()
+#write.csv(RfmWc, file='rfm_result.csv')
+
+# rfm_heatmap(rfm_result)
+# 
+# rfm_bar_chart(rfm_result, bar_color = "bisque4",
+#               xaxis_title = "Деньги", sec_xaxis_title = "Частота",
+#               yaxis_title = " ", sec_yaxis_title = "Недавность")
+# 
+# #monetary value (total revenue generated by each customer)
+# #recency days (days since the most recent visit for each customer)
+# #frequency (transaction count for each customer)
+# 
+# rfm_histograms(rfm_result)
+# rfm_histograms(rfm_result, hist_bins = 10, hist_color = "darkblue",
+#                plot_title = "Относительная частота", xaxis_title = " ",
+#                yaxis_title = "Количество", hist_m_label = "Деньги",
+#                hist_r_label = "Недавно", hist_f_label = "Частота",
+#                plot_title_justify = 0.5)
+# 
+# # Шаг 3 - Создадим сегменты (от самых лояльных до потерянных)
+# #segment_names <- c("Лояльный", "Лояльный_покупатель", "Может_быть_лояльным",
+#                    "Новичок", "Падающий_надежду", "Требует_внимания", "Засыпает",
+#                    "В_зоне_риска", "Нельзя_терять", "В_спячке", "Потерян")
+# 
+# 
+# 
+# segment_names <- c("Champions", "Loyal Customers", "Potential Loyalist",
+#                    "New Customers", "Promising", "Need Attention", "About To Sleep",
+#                    "At Risk", "Can't Lose Them", "Lost")
+# 
+# recency_lower <- c(4, 2, 3, 4, 3, 2, 2, 1, 1, 1)
+# recency_upper <- c(5, 5, 5, 5, 4, 3, 3, 2, 1, 2)
+# frequency_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1)
+# frequency_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2)
+# monetary_lower <- c(4, 3, 1, 1, 1, 2, 1, 2, 4, 1)
+# monetary_upper <- c(5, 5, 3, 1, 1, 3, 2, 5, 5, 2)
+
+test <- c2 %>%
+  filter(IdTel == "9165747126") 
+%>%
+  summarize(sum = sum(total, na.rm = TRUE),
+            average = mean(total, na.rm=TRUE), 
+  ) 
+
+
+
+test <- RfmLast %>%
+  filter(status == "Новички высокий чек. Потенциальные VIP") 
+
+
+
+%>%
+  
+  
+  
+  summarize(sum = sum(total, na.rm = TRUE),
+            average = mean(total, na.rm=TRUE), 
+  ) 
+
+
+colnames(RfmWc)
+
+weights <- RfmWc$amount
+quantile(weights, prob = seq(0, 1, length = 11), type = 5)
+
+
