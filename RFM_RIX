@@ -66,6 +66,10 @@ if(!require(xlsx)){
   library(xlsx)
 }
 
+
+
+
+
 data <- read.csv2(file.path("/home/rstudio/R/Scripts_July","rfm_rixos.csv"), stringsAsFactors=FALSE)
 
 str(data)
@@ -103,52 +107,54 @@ sum <- as.integer(data_d4$RATE_TOTAL)
 
 data_prep <- data.frame(Id, date, sum)
 
-
 data_prep <- data_prep %>%
   group_by(Id, date) %>%
   summarize(sum = sum(sum, na.rm = TRUE),
-            average = mean(sum, na.rm=TRUE), 
-  )
-
-
-
-
-data_prep  <- data_prep[complete.cases(data_prep), ]
-
-
+            count =n())
+     
+####################################################
 rfm_result <- rfm_table_order(data_prep,
                               Id,
                               date,
                               sum,
                               analysis_date=Sys.Date(),
-                              recency_bins = 3,
-                              frequency_bins = 3,
-                              monetary_bins = 3)
+                              recency_bins = 5,
+                              frequency_bins = 5,
+                              monetary_bins = 5)
+
 
 
 rfm <-data.frame(rfm_result$rfm)
 
+####################################################################################################################
+
+colnames(rfm)[1] <- "GUEST_NAME"
+
+rfm <- left_join(rfm, data, by="GUEST_NAME")
 
 
-unique(data$DEPARTMENT_CODE)
+write.csv(rfm, file='rixos_result.csv')
+
+write.xlsx2(rfm, file='rixos_result.xlsx', sheetName="Sheet1",
+            col.names=TRUE, row.names=TRUE, append=FALSE, password=NULL)
 
 
+#write.csv(RfmWc, file='rfm_result.csv')
 
-
-
-
-
-CHANNEL_CODE <- data %>% 
-  group_by(Year, CHANNEL_CODE) %>%
-  filter(!is.na(RATE_TOTAL)) %>% # takes out all potentially problematic entries
-  summarise(m = mean(RATE_TOTAL))  %>% arrange(desc(Year, RATE_TOTAL))
-
-#################################################################################
-DEPARTMENT_CODE <- data %>% 
-  group_by(Year, DEPARTMENT_CODE) %>%
-  filter(!is.na(RATE_TOTAL)) %>% # takes out all potentially problematic entries
-  summarise(Dep_mean = mean(RATE_TOTAL)) %>% arrange(desc(Year)) 
-##############################################################################
+getwd()
+# 
+# 
+# CHANNEL_CODE <- data %>% 
+#   group_by(Year, CHANNEL_CODE) %>%
+#   filter(!is.na(RATE_TOTAL)) %>% # takes out all potentially problematic entries
+#   summarise(m = mean(RATE_TOTAL))  %>% arrange(desc(Year, RATE_TOTAL))
+# 
+# #################################################################################
+# DEPARTMENT_CODE <- data %>% 
+#   group_by(Year, DEPARTMENT_CODE) %>%
+#   filter(!is.na(RATE_TOTAL)) %>% # takes out all potentially problematic entries
+#   summarise(Dep_mean = mean(RATE_TOTAL)) %>% arrange(desc(Year)) 
+# ##############################################################################
 
 
  
