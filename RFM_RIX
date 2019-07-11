@@ -1,0 +1,154 @@
+getwd()
+
+if(!require(dplyr)){
+  install.packages("dplyr")
+  library(dplyr)
+}
+
+
+if(!require(rfm)){
+  install.packages("rfm")
+  library(rfm)
+}
+
+if(!require(lubridate)){
+  install.packages("lubridate")
+  library(lubridate)
+}
+
+if(!require(ggplot2)){
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if(!require(crayon)){
+  install.packages("crayon")
+  library(crayon)
+}
+
+if(!require(fansi)){
+  install.packages("fansi")
+  library(fansi)
+}
+
+if(!require(utf8)){
+  install.packages("fansi")
+  library(utf8)
+}
+
+if(!require(cli)){
+  install.packages("cli")
+  library(cli)
+}
+
+if(!require(ggthemes)){
+  install.packages("ggthemes")
+  library(ggthemes)
+}
+
+if(!require(labeling)){
+  install.packages("labeling")
+  library(labeling)
+}
+
+if(!require(forcats)){
+  install.packages("forcats")
+  library(forcats)
+}
+
+if(!require(RColorBrewer)){
+  install.packages("RColorBrewer")
+  library(RColorBrewer)
+}
+
+if(!require(xlsx)){
+  install.packages("xlsx")
+  library(xlsx)
+}
+
+data <- read.csv2(file.path("/home/rstudio/R/Scripts_July","rfm_rixos.csv"), stringsAsFactors=FALSE)
+
+str(data)
+
+#################################################################################
+#################################################################################
+
+data$ARRIVAL <- dmy(data$ARRIVAL)
+data$DEPARTURE<- dmy(data$DEPARTURE)
+
+data$Year <- format(data$ARRIVAL, "%Y")
+data$Month <- format(data$ARRIVAL, "%b")
+#################################################################################
+#################################################################################
+
+data_d <- data %>% filter(DEPARTMENT_CODE %in% c("Accomodation", "Room Charge", "Accommodation"))
+                                                 
+
+
+#################################################################################
+#################################################################################
+#################################################################################
+#################################################################################
+
+data_d2 <- data_d %>% filter(!data_d$Year %in% "2014" & !data_d$Month %in% "Jan")
+
+data_d3 <- data_d2 %>% filter(!data_d2$Year %in% "2014" & !data_d2$Month %in% "Feb")
+
+data_d4 <- data_d3 %>% filter(!data_d3$Year %in% "2014" & !data_d3$Month %in% "Mar")
+
+                        
+Id <- as.factor(data_d4$GUEST_NAME)
+date <- as.Date(data_d4$DEPARTURE)
+sum <- as.integer(data_d4$RATE_TOTAL)
+
+data_prep <- data.frame(Id, date, sum)
+
+
+data_prep <- data_prep %>%
+  group_by(Id, date) %>%
+  summarize(sum = sum(sum, na.rm = TRUE),
+            average = mean(sum, na.rm=TRUE), 
+  )
+
+
+
+
+data_prep  <- data_prep[complete.cases(data_prep), ]
+
+
+rfm_result <- rfm_table_order(data_prep,
+                              Id,
+                              date,
+                              sum,
+                              analysis_date=Sys.Date(),
+                              recency_bins = 3,
+                              frequency_bins = 3,
+                              monetary_bins = 3)
+
+
+rfm <-data.frame(rfm_result$rfm)
+
+
+
+unique(data$DEPARTMENT_CODE)
+
+
+
+
+
+
+
+CHANNEL_CODE <- data %>% 
+  group_by(Year, CHANNEL_CODE) %>%
+  filter(!is.na(RATE_TOTAL)) %>% # takes out all potentially problematic entries
+  summarise(m = mean(RATE_TOTAL))  %>% arrange(desc(Year, RATE_TOTAL))
+
+#################################################################################
+DEPARTMENT_CODE <- data %>% 
+  group_by(Year, DEPARTMENT_CODE) %>%
+  filter(!is.na(RATE_TOTAL)) %>% # takes out all potentially problematic entries
+  summarise(Dep_mean = mean(RATE_TOTAL)) %>% arrange(desc(Year)) 
+##############################################################################
+
+
+ 
