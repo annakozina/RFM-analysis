@@ -1,0 +1,132 @@
+if(!require(rfm)){
+  install.packages("rfm")
+  library(rfm)
+}
+
+if(!require(lubridate)){
+  install.packages("lubridate")
+  library(lubridate)
+}
+
+if(!require(ggplot2)){
+  install.packages("ggplot2")
+  library(ggplot2)
+}
+
+if(!require(crayon)){
+  install.packages("crayon")
+  library(crayon)
+}
+
+if(!require(fansi)){
+  install.packages("fansi")
+  library(fansi)
+}
+
+if(!require(utf8)){
+  install.packages("fansi")
+  library(utf8)
+}
+
+if(!require(cli)){
+  install.packages("cli")
+  library(cli)
+}
+
+if(!require(ggthemes)){
+  install.packages("ggthemes")
+  library(ggthemes)
+}
+
+if(!require(labeling)){
+  install.packages("labeling")
+  library(labeling)
+}
+
+if(!require(forcats)){
+  install.packages("forcats")
+  library(forcats)
+}
+
+if(!require(RColorBrewer)){
+  install.packages("RColorBrewer")
+  library(RColorBrewer)
+}
+
+if(!require(xlsx)){
+  install.packages("xlsx")
+  library(xlsx)
+}
+
+if(!require(dplyr)){
+  install.packages("dplyr")
+  library(dplyr)
+}
+
+if(!require(stringi)){
+  install.packages("stringi")
+  library(stringi)
+}
+
+if(!require(stringr)){
+  install.packages("stringr")
+  library(stringr)
+}
+
+
+Customer_1 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_customer.csv"), stringsAsFactors=FALSE)
+Customer_2 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_order_product.csv"), sep =";", stringsAsFactors=FALSE)
+Customer_3 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_product.csv"), stringsAsFactors=FALSE)
+Customer_4 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop","cart_country.csv"), stringsAsFactors=FALSE)
+Customer_5 <- read.csv(file.path("/home/rstudio/R/ScriptsMay/RfmEshop", "cart_address.csv"), stringsAsFactors=FALSE)
+
+str(Customer_1)
+str(Customer_2)
+str(Customer_3)
+str(Customer_4)
+str(Customer_5)
+
+c1 <- data.frame(Customer_1)
+c2 <- data.frame(Customer_2)
+c3 <- data.frame(Customer_3)
+c4 <- data.frame(Customer_4)
+c5 <- data.frame(Customer_5)
+
+## ФУНКИЙЯ ПО ОЧИСТКЕ ДАННЫХ
+
+FirstFunction <- function(x){
+  stringr::str_replace_all(x, "[^[:alnum:]]", "")
+}
+
+SecondFunction <- function(x){
+  stringr::str_replace_all(x, "[:blank:]", "")
+}
+
+c2$telephone <-sapply(c2$telephone,FirstFunction)
+c2$telephone <-sapply(c2$telephone,SecondFunction)
+c2$IdTel <- stri_sub(c2$telephone, -9 -1)
+
+############################################################################################
+c1$telephone <-sapply(c1$telephone,FirstFunction)
+c1$telephone <-sapply(c1$telephone,SecondFunction)
+#c1$telephone <-as.numeric(c1$telephone)
+c1$IdTel <- stri_sub(c1$telephone, -9 -1)
+##############################################################################################
+
+c2$date_added <- as.Date(c2$date_added)
+
+c2 <- c2  %>% filter(date_added >= "2017-08-01" & date_added <= "2019-05-01") 
+
+c2 <- c2  %>% filter(product_id == 51|product_id == 50)
+
+"Скипасс сезонный взрослый" 
+"Скипасс сезонный детский"    
+
+
+write.xlsx(c2, file = "skipass_season.xlsx", sheetName = "any", append = FALSE)
+
+list.files()
+
+#################################################################################################
+ 
+
